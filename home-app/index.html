@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=1920"><title>Home</title>
+<!-- NATIVE_LIBRARIES -->
+<style>/* APP_CSS */</style>
+</head><body>
+<main id="home">
+ <div class="landscape" aria-hidden="true"><div id="scene-a" class="scene"></div><div id="scene-b" class="scene"></div><div class="scene-shade"></div></div>
+ <header><div class="wordmark"><span class="home-mark" aria-hidden="true"></span>Home</div>
+  <div class="header-right"><span id="date"></span><time id="clock"></time><button id="customize" class="header-button glass" data-row="0">Customize <span aria-hidden="true">✦</span></button></div>
+ </header>
+ <section class="hero"><div class="hero-copy"><p class="eyebrow" id="greeting">WELCOME HOME</p><h1>A little escape.<br>Right at home.</h1><p class="subtitle">Your favourites. Your space.</p></div>
+  <aside id="prayer-card" class="prayer-card glass" aria-label="Prayer times" hidden>
+   <div class="prayer-heading"><span id="prayer-location" class="prayer-location">Your location</span><span class="moon" aria-hidden="true">☾</span></div>
+   <p id="prayer-region" class="prayer-region"></p>
+   <div class="next-prayer"><span id="next-label">Prayer times</span><strong id="next-time">—</strong><span id="prayer-countdown">Fetching today's times…</span></div>
+   <div id="prayer-times" class="prayer-times"></div>
+   <p id="prayer-note">Calculated · AlAdhan</p>
+  </aside>
+ </section>
+ <section class="apps-section"><div class="section-heading"><h2>Your favourites</h2><span id="app-count"></span></div><div id="apps" class="cards"></div></section>
+ <section class="devices-section"><div class="section-heading"><h2>Connected devices <span id="device-count" class="count"></span></h2><span id="device-status">Detected by your TV</span></div><div id="devices" class="devices-row"></div><p id="devices-empty" hidden>No devices detected. Switch on your device, or open All sources.</p></section>
+ <nav class="essentials-row" aria-label="TV controls">
+  <button data-row="3" data-action="watch"><span class="line-icon tv-icon" aria-hidden="true"></span><span>Live TV</span></button>
+  <button data-row="3" data-action="inputs"><span class="line-icon sources-icon" aria-hidden="true"></span><span>All sources</span></button>
+  <button data-row="3" data-action="settings"><span class="line-icon" aria-hidden="true">⚙</span><span>Settings</span></button>
+  <button data-row="3" id="change-scene"><span class="line-icon" aria-hidden="true">◈</span><span>New view</span></button>
+ </nav>
+ <footer><span class="remote-hint"><span class="key-hint">↔</span> Browse <span class="key-hint ok-hint">OK</span> Select</span><span id="photo-credit"></span><span id="mode"></span></footer>
+ <p id="notice" role="status" aria-live="polite"></p>
+</main>
+<div id="overlay" hidden><section role="dialog" aria-modal="true" aria-labelledby="dialog-title">
+ <h2 id="dialog-title"></h2><p id="dialog-hint"></p><div id="dialog-options"></div><p class="dialog-back">Back / Esc to close</p>
+</section></div>
+<script>/* APP_CONFIG */</script><script>/* APP_BRIDGE */</script><script>/* APP_JS */</script>
+</body></html>

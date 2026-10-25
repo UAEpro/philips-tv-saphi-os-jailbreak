@@ -1,0 +1,10 @@
+build/
+research/
+__pycache__/
+*.pyc
+.DS_Store
+.env
+.env.*
+!.env.example
+home-app/config.local.js
+*.log
