@@ -103,13 +103,14 @@
     function inspect() {
         var doc = document, button = doc.activeElement, inputs = [];
         try {inputs = window.HomeTV.inputs();} catch(e) {inputs = [{error:String(e)}];}
-        report({event:'inspection', uiVersion:'glass-home-lifecycle-v2', path:location.pathname, native:window.HomeTV.live,
+        report({event:'inspection', uiVersion:'glass-home-tiles-v3', path:location.pathname, native:window.HomeTV.live,
             width:innerWidth, height:innerHeight, homeWidth:doc.getElementById('home').clientWidth,
             homeHeight:doc.getElementById('home').clientHeight, focused:button ? button.textContent : '',
             dialog:doc.getElementById('overlay').hidden ? null : doc.getElementById('dialog-title').textContent,
             notice:doc.getElementById('notice').textContent,
             inputs:inputs, connectedDevices:window.HomeApp ? window.HomeApp.connected() : [],
             installedApps:window.HomeApp ? window.HomeApp.apps() : [],
+            appTiles:Array.prototype.map.call(doc.querySelectorAll('#apps [data-app]'),function (item) {return {id:item.getAttribute('data-app'),name:item.textContent};}),
             atmosphere:window.HomeApp ? window.HomeApp.inspect() : null,
             performance:window.HomeApp ? window.HomeApp.performance() : null,
             promotionCost:promotionCost,

@@ -194,6 +194,7 @@ node --check native-home/install.js
 node --check native-home/session.js
 node --check native-home/restore.js
 node tests/native_home.test.cjs
+node tests/home_tiles.test.cjs
 node tests/home_atmosphere.test.cjs
 node tests/native_session.test.cjs
 python3 -m unittest discover -s tests -p "test_*.py"
@@ -516,6 +517,7 @@ is not an installable firmware image.
 | Stock Home flashes briefly before custom Home | Deploy the updated saved hook with `reload`; check the masked handoff and explicit Home-key handling |
 | Home immediately disappears back to HDMI after working initially | Check the surviving stock idle counter; deploy the lifecycle fix and verify `stockIdle` stays inactive beyond two minutes |
 | Promotion returns | Early native hide, blocked show callbacks and visible-page hide guard |
+| Netflix is marked as added but its tile disappears | Update the runtime; app style classes use `home-app-` to avoid the stock recommendation cleanup that removes `.netflix` elements |
 | Installed app is missing | Actual registry refresh; firmware bundles and preview samples are not installed-app evidence |
 | Connected device is missing | CEC, USB or active-signal evidence; inactive non-CEC inputs may be undetectable |
 | Photo or calendar fails only on TV | TV-side internet/TLS/CORS behaviour; retain cache and fallback UI |

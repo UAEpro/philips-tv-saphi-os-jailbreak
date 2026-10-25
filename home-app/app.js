@@ -254,7 +254,9 @@ function HomeAtmosphere() {
         favourites.forEach(function (id) {
             var app = getApp(id), b = button("", function () { attempt(function () { HomeTV.app(id); }); });
             if (!app) return;
-            b.setAttribute("data-app",id); b.className = "app-card " + app.style; b.setAttribute("data-row", "1");
+            // Native recommendation callbacks delete .netflix globally. Keep
+            // our visual classes separate from stock selectors and launch IDs.
+            b.setAttribute("data-app",id); b.className = "app-card home-app-" + app.style; b.setAttribute("data-row", "1");
             var symbol = document.createElement("span"); symbol.className = "symbol"; symbol.textContent = app.symbol;
             var name = document.createElement("span"); name.className = "app-name"; name.textContent = app.name; b.appendChild(symbol);
             if (app.icon && app.style === 'installed') {
