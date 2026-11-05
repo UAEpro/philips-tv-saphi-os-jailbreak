@@ -21,12 +21,15 @@ from the reference TPM186E platform. Its UI is
 `TV_JSP` and `IHSMenuItems`.
 
 A DLNA-title script probe executed in that native UI. Correct MP3 metadata,
-HTTP/1.1 HEAD/GET and byte-range responses were needed for playback. A temporary
-adaptation of the Home UI rendered on the physical screen, enumerated native
-apps, and accepted remote navigation. This is evidence for a possible port;
-it does not establish a persistent default launcher on TPN226E.
+HTTP/1.1 HEAD/GET and byte-range responses were needed for playback. The native
+adapter rendered on the physical screen, enumerated native apps,
+and accepted remote navigation. A saved source-tile focus hook recovered it
+after a complete native UI reload with the laptop helper stopped. See
+[native-nvt/README.md](native-nvt/README.md) for the activation requirement and
+recovery contract. Automatic cold-boot startup is not established.
 
 The reference installer's model guard must remain intact. No firmware image
-was installed. The experimental native-UI adapter and persistence probes are
-not included in this compatibility fix, because activation after restart and
-recovery still require hardware validation.
+was installed. The adapter assets are included separately; private inspection
+helpers and
+firmware extracts are excluded. They do not change the reference installer or
+claim unattended installation on other models.
