@@ -11,10 +11,10 @@ from xml.sax.saxutils import escape
 
 
 class TV:
-    def __init__(self, host, port=2870):
+    def __init__(self, host, port=2870, description="dmr.xml"):
         self.base = f"http://{host}:{port}/"
         self.http = urllib.request.build_opener(urllib.request.ProxyHandler({}))
-        root = ET.fromstring(self.http.open(self.base + "dmr.xml", timeout=5).read())
+        root = ET.fromstring(self.http.open(self.base + description, timeout=5).read())
         ns = {"d": "urn:schemas-upnp-org:device-1-0"}
         self.name = root.findtext(".//d:friendlyName", namespaces=ns)
         self.services = {}
@@ -113,6 +113,8 @@ class TV:
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--host", required=True, help="TV LAN address")
+    parser.add_argument("--port", type=int, default=2870, help="Advertised renderer port")
+    parser.add_argument("--description", default="dmr.xml", help="Advertised description path")
     sub = parser.add_subparsers(dest="command", required=True)
     sub.add_parser("status")
     sub.add_parser("control-test", help="Decrease volume one step, verify, then restore")
@@ -122,7 +124,7 @@ def main():
     app.add_argument("name", choices=("YouTube", "Netflix"))
     app.add_argument("action", choices=("status", "launch", "stop"))
     args = parser.parse_args()
-    tv = TV(args.host)
+    tv = TV(args.host, args.port, args.description)
     if args.command == "status":
         result = tv.status()
     elif args.command == "control-test":
