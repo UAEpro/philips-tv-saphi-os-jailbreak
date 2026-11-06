@@ -1,4 +1,9 @@
-# TPN226E native Home adapter
+# TPN226E Home adapter (HTML UI)
+
+The launcher renders HTML/CSS/JavaScript inside the TV's browser. Here, "native"
+refers to integration with the TV's existing Home methods and RPCs. It does not
+mean a compiled native UI or a replacement operating-system image. See
+[FIRMWARE.md](FIRMWARE.md) for the separate native-executable investigation.
 
 This adapter targets the physically tested **55PUS7657/12** with
 **TPN226E_V226.003.087.001**, UI build
