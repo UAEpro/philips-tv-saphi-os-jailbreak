@@ -19,10 +19,10 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--stock', type=Path, help='Optional independently obtained reference dashboard HTML to hash-check')
     args = parser.parse_args()
-    template = (SOURCE / "index.html").read_text()
+    template = (SOURCE / "index.html").read_text(encoding="utf-8")
     config_name = 'config.local.js' if (SOURCE / 'config.local.js').exists() else 'config.js'
     for marker, name in (("/* APP_CONFIG */", config_name), ("/* APP_CSS */", "app.css"), ("/* APP_BRIDGE */", "bridge.js"), ("/* APP_JS */", "app.js")):
-        text = (SOURCE / name).read_text()
+        text = (SOURCE / name).read_text(encoding="utf-8")
         if "</script" in text.lower() or template.count(marker) != 1:
             raise ValueError("Unexpected template or closing script tag")
         template = template.replace(marker, text)
@@ -35,10 +35,10 @@ def main():
     preview.mkdir(parents=True, exist_ok=True)
     library_tags = "\n".join('<script src="' + path + '"></script>' for path in LIBRARIES)
     content = template.replace("<!-- NATIVE_LIBRARIES -->", library_tags)
-    (native / "index.html").write_text(content)
+    (native / "index.html").write_text(content, encoding="utf-8")
     if stock is not None:
         (native / "original-index.html").write_bytes(stock)
-    (preview / "preview.html").write_text(template.replace("<!-- NATIVE_LIBRARIES -->", "<!-- Preview: native libraries are intentionally omitted. -->"))
+    (preview / "preview.html").write_text(template.replace("<!-- NATIVE_LIBRARIES -->", "<!-- Preview: native libraries are intentionally omitted. -->"), encoding="utf-8")
     manifest = {
         "model": "65PUT6703/56", "firmware": "TPM186E_018.005.036.001",
         "status": "generated_file_only_not_written_to_tv",
@@ -47,7 +47,7 @@ def main():
         "bytes": len(content.encode()), "sha256": hashlib.sha256(content.encode()).hexdigest(),
         "original_sha256": EXPECTED if stock is not None else None, "existing_firmware_dependencies": LIBRARIES,
     }
-    (native / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
+    (native / "manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(manifest, indent=2))
 
 
