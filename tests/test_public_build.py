@@ -30,13 +30,13 @@ class PublicBuildTests(unittest.TestCase):
             self.assertNotIn(marker, html)
 
     def test_local_settings_override_without_rewriting_public_defaults(self):
-        default = (self.root / 'home-app/config.js').read_text()
+        default = (self.root / 'home-app/config.js').read_text(encoding='utf-8')
         custom = default.replace('utcOffsetMinutes: 0', 'utcOffsetMinutes: 60')
-        (self.root / 'home-app/config.local.js').write_text(custom)
+        (self.root / 'home-app/config.local.js').write_text(custom, encoding='utf-8')
         with patch.object(native_home, 'ROOT', self.root):
             html = native_home.home_html()
         self.assertIn('utcOffsetMinutes: 60', html)
-        self.assertEqual((self.root / 'home-app/config.js').read_text(), default)
+        self.assertEqual((self.root / 'home-app/config.js').read_text(encoding='utf-8'), default)
 
     def test_preview_build_needs_no_firmware(self):
         shutil.copy2(ROOT / 'build_home_app.py', self.root)

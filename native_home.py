@@ -29,16 +29,16 @@ PIXEL = base64.b64decode('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRA
 
 
 def home_html():
-    template = (ROOT / 'home-app/index.html').read_text()
+    template = (ROOT / 'home-app/index.html').read_text(encoding='utf-8')
     template = template.replace('<!-- NATIVE_LIBRARIES -->', '')
     config_name = 'config.local.js' if (ROOT / 'home-app/config.local.js').exists() else 'config.js'
     for marker, name in [('/* APP_CONFIG */', config_name), ('/* APP_CSS */', 'app.css'), ('/* APP_BRIDGE */', 'bridge.js'), ('/* APP_JS */', 'app.js')]:
-        template = template.replace(marker, (ROOT / 'home-app' / name).read_text())
+        template = template.replace(marker, (ROOT / 'home-app' / name).read_text(encoding='utf-8'))
     return template
 
 
 def control(args):
-    state = json.loads(STATE.read_text())
+    state = json.loads(STATE.read_text(encoding='utf-8'))
     data = {'action': args.action}
     if args.action == 'key':
         data['code'] = KEYS[args.key]
@@ -55,7 +55,7 @@ def launch(args):
     # A second launch reuses a healthy helper. Never spawn competing sessions.
     if STATE.exists():
         try:
-            old = json.loads(STATE.read_text())
+            old = json.loads(STATE.read_text(encoding='utf-8'))
             http = urllib.request.build_opener(urllib.request.ProxyHandler({}))
             headers = {'Authorization':'Bearer '+old['control_token'],'Content-Type':'application/json'}
             request = urllib.request.Request(old['base']+'/status',headers=headers)
@@ -89,7 +89,7 @@ def launch(args):
              'started':datetime.now(timezone.utc).isoformat(), 'storage':'native browser localStorage', 'cold_boot_verified':False}
     directory = ROOT / 'build/native-home'
     directory.mkdir(parents=True, exist_ok=True)
-    (directory / f'{nonce}-original.json').write_text(json.dumps(original, indent=2))
+    (directory / f'{nonce}-original.json').write_text(json.dumps(original, indent=2), encoding='utf-8')
     log = directory / f'{nonce}-events.jsonl'
     ready = threading.Event()
     restored = threading.Event()
@@ -106,7 +106,7 @@ def launch(args):
             'else{getTvJspService().utility.notifyOpenUrl(JSON.stringify({URL:"file:///3rd/html5/php/dash/index.html",RESOLUTION:"1080P"}));setTimeout(function(){mtvuiUtil.sendPlatformMsg(' + json.dumps({'type':1,'value':{'msgType':'execute','value':other}}) + ');},1200);}}());').encode()
 
     def runtime():
-        return 'window.__nativeHomeConfig=' + json.dumps({'base':base,'html':home_html()}) + ';\n' + (ROOT / 'native-home/session.js').read_text()
+        return 'window.__nativeHomeConfig=' + json.dumps({'base':base,'html':home_html()}) + ';\n' + (ROOT / 'native-home/session.js').read_text(encoding='utf-8')
 
     class Handler(BaseHTTPRequestHandler):
         def log_message(self, *_):
@@ -177,10 +177,10 @@ def launch(args):
             if path == '/boot.js':self.send(bootstrap('/install.js'),'application/javascript');return
             if path == '/restore-boot.js':self.send(bootstrap('/restore.js'),'application/javascript');return
             if path == '/install.js':
-                data = 'window.__nativeHomeInstall=' + json.dumps({'base':base,'runtime':runtime()}) + ';\n' + (ROOT / 'native-home/install.js').read_text()
+                data = 'window.__nativeHomeInstall=' + json.dumps({'base':base,'runtime':runtime()}) + ';\n' + (ROOT / 'native-home/install.js').read_text(encoding='utf-8')
                 self.send(data.encode(),'application/javascript');return
             if path == '/restore.js':
-                data = 'window.__nativeHomeRestoreBase='+json.dumps(base)+';\n'+(ROOT/'native-home/restore.js').read_text()
+                data = 'window.__nativeHomeRestoreBase='+json.dumps(base)+';\n'+(ROOT/'native-home/restore.js').read_text(encoding='utf-8')
                 self.send(data.encode(),'application/javascript');return
             if path == '/home.js':
                 self.send(runtime().encode(),'application/javascript');return
@@ -197,7 +197,7 @@ def launch(args):
                     event = json.loads(value)
                     event['at'] = datetime.now(timezone.utc).isoformat()
                     events.append(event)
-                    with log.open('a') as output:output.write(json.dumps(event)+'\n')
+                    with log.open('a', encoding='utf-8') as output:output.write(json.dumps(event)+'\n')
                     print(json.dumps(event),flush=True)
                     if event.get('event') == 'ready' and event.get('native') is True:ready.set()
                     if event.get('event') == 'stock-restored':restored.set()
@@ -217,7 +217,7 @@ def launch(args):
             self.send_error(404)
 
     server = ThreadingHTTPServer((args.host,args.port),Handler)
-    STATE.write_text(json.dumps(state, indent=2));STATE.chmod(0o600)
+    STATE.write_text(json.dumps(state, indent=2), encoding='utf-8');STATE.chmod(0o600)
     threading.Thread(target=server.serve_forever,daemon=True).start()
     def activate(script):
         title = '<img src=x onerror="this.onerror=null;$.getScript(\'' + base + script + '\')">'

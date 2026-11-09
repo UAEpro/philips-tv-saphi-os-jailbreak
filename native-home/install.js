@@ -2,7 +2,12 @@
    The stock firmware files and app installation state are never modified. */
 (function () {
     var config = window.__nativeHomeInstall;
-    if (location.protocol !== 'file:' || location.pathname !== '/3rd/html5/php/dash/index.html') return;
+    // The hook lives in localStorage['IHSMenuItems'], which the dashboard and the
+    // content browser share on the same file:// origin. Allow installing from
+    // either page so firmware that lands injection on the content browser
+    // (TPM196E) can patch the same menu the dashboard reads at boot.
+    if (location.protocol !== 'file:' || (location.pathname !== '/3rd/html5/php/dash/index.html'
+        && location.pathname !== '/3rd/html5/php/ContentBrowser/content_browser.html')) return;
     var prefix = 'compact-home.', backupKey = prefix + 'stock-menu.v1';
     function report(data) {
         var image = new Image(); window.__nhInstallReport = image;
@@ -16,7 +21,7 @@
         // Mask only the stock document while the current rendering task finishes.
         // A zero-delay handoff avoids a visible stock menu without re-entering its
         // renderer. Always release the mask if the saved runtime fails to load.
-        var handler = "this.onload=null;this.onerror=null;if(localStorage.getItem('compact-home.enabled.v1')==='1'&&!window.__nhScheduled&&localStorage.getItem('compact-home.runtime.v1')){window.__nhScheduled=true;var root=document.documentElement,oldVisibility=root.style.visibility;root.style.visibility='hidden';try{getTvJspService().tvServices.advMsg('smallAdv','HIDE_WIN ')}catch(e){};setTimeout(function(){try{(0,eval)(localStorage.getItem('compact-home.runtime.v1')||'')}catch(e){window.__nhScheduled=false}finally{root.style.visibility=oldVisibility}},0)}";
+        var handler = "this.onload=null;this.onerror=null;if(localStorage.getItem('compact-home.enabled.v1')==='1'&&!window.__nhScheduled&&localStorage.getItem('compact-home.runtime.v1')){window.__nhScheduled=true;var root=document.documentElement,oldVisibility=root.style.visibility;root.style.visibility='hidden';try{var _s=getTvJspService();(_s.tvServices||_s).advMsg('smallAdv','HIDE_WIN ')}catch(e){};setTimeout(function(){try{(0,eval)(localStorage.getItem('compact-home.runtime.v1')||'')}catch(e){window.__nhScheduled=false}finally{root.style.visibility=oldVisibility}},0)}";
         menu.item.forEach(function (row) {
             (row.row2 || []).forEach(function (item) {
                 if (item && item.itemName === 'Reorder' && typeof item.itemImg === 'string') {
@@ -42,7 +47,16 @@
                 window.menu_info_tpv = menu;
                 if (localStorage.getItem(prefix+'runtime.v1') !== config.runtime) throw new Error('Runtime storage verification failed.');
                 report({event:'installed', anchors:patched, runtimeBytes:config.runtime.length, backupBytes:backup.length, storage:'localStorage'});
-                (0,eval)(config.runtime);
+                if (location.pathname === '/3rd/html5/php/dash/index.html') {
+                    // On the dashboard the runtime renders in place immediately.
+                    (0,eval)(config.runtime);
+                } else {
+                    // Installed from the content browser (TPM196E): load a fresh
+                    // dashboard so its menu images fire the onload hook, exactly
+                    // as a cold boot does.
+                    var _s = getTvJspService();
+                    (_s.utility || _s).notifyOpenUrl(JSON.stringify({URL:'file:///3rd/html5/php/dash/index.html', RESOLUTION:'1080P'}));
+                }
             } catch(e) {
                 localStorage.removeItem(prefix+'enabled.v1');
                 localStorage.setItem('IHSMenuItems', backup);
